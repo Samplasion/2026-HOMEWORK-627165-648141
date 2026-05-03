@@ -23,4 +23,9 @@ public class Giocatore {
 	public Borsa getBorsa() {
 		return borsa;
 	}
+	
+	@Override()
+	public String toString() {
+		return "Giocatore\n- CFU: " + cfu + "\n- Borsa:\n  - " + borsa;
+	}
 }
