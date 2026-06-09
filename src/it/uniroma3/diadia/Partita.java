@@ -20,7 +20,13 @@ public class Partita {
 	
 	public Partita() {
 		this.finita = false;
-		labirinto = new Labirinto();
+		labirinto = Labirinto.newBuilder().getLabirinto();
+		giocatore = new Giocatore();
+	}
+	
+	public Partita(Labirinto labirinto) {
+		this.finita = false;
+		this.labirinto = labirinto;
 		giocatore = new Giocatore();
 	}
 	

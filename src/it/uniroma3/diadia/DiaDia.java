@@ -3,9 +3,10 @@ package it.uniroma3.diadia;
 
 import java.util.Scanner;
 
+import it.uniroma3.diadia.ambienti.Labirinto;
 import it.uniroma3.diadia.ambienti.Stanza;
 import it.uniroma3.diadia.attrezzi.Attrezzo;
-import it.uniroma3.diadia.comandi.Comando;
+import it.uniroma3.diadia.comandi.AbstractComando;
 import it.uniroma3.diadia.comandi.FabbricaDiComandi;
 import it.uniroma3.diadia.comandi.FabbricaDiComandiFisarmonica;
 
@@ -44,13 +45,19 @@ public class DiaDia {
 		this.commandFactory = FabbricaDiComandiFisarmonica.instance();
 	}
 
+	public DiaDia(Labirinto lab, IO console) {
+		this.console = console;
+		this.partita = new Partita(lab);
+		this.commandFactory = FabbricaDiComandiFisarmonica.instance();
+	}
+
 	public void gioca() {
 		String istruzione; 
 
 		console.mostraMessaggio(MESSAGGIO_BENVENUTO);		
-		do		
-			istruzione = console.leggiRiga();
-		while (!processaIstruzione(istruzione));
+		while ((istruzione = console.leggiRiga()) != null && !processaIstruzione(istruzione)) {
+			// continua finche' ci sono istruzioni e la partita non termina
+		}
 	}   
 
 
@@ -61,7 +68,7 @@ public class DiaDia {
 	 */
 	private boolean processaIstruzione(String istruzione) {
 //		Comando comandoDaEseguire = new Comando(istruzione);
-		Comando comandoDaEseguire = commandFactory.parseCommand(istruzione);
+		AbstractComando comandoDaEseguire = commandFactory.parseCommand(istruzione);
 		
 		boolean shouldStop = comandoDaEseguire.run(console, partita);
 		

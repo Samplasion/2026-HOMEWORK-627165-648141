@@ -15,8 +15,11 @@ public class FabbricaDiComandiFisarmonica implements FabbricaDiComandi {
 		comandi.put("aiuto", ComandoAiuto.class);
 		comandi.put("fine", ComandoFine.class);
 		comandi.put("guarda", ComandoGuarda.class);
+		comandi.put("interagisci", ComandoInteragisci.class);
 		comandi.put("posa", ComandoPosa.class);
 		comandi.put("prendi", ComandoPrendi.class);
+		comandi.put("regala", ComandoRegala.class);
+		comandi.put("saluta", ComandoSaluta.class);
 		comandi.put("vai", ComandoVai.class);
 	}
 	
@@ -26,7 +29,8 @@ public class FabbricaDiComandiFisarmonica implements FabbricaDiComandi {
 	}
 	
 	@Override
-	public Comando parseCommand(String line) {
+	public AbstractComando parseCommand(String line) {
+		if (line == null || line.isBlank()) return new ComandoNonValido();
 		try (Scanner lineScanner = new Scanner(line)) {
 			String name = lineScanner.next().toLowerCase();
 			String param = null;
@@ -39,10 +43,10 @@ public class FabbricaDiComandiFisarmonica implements FabbricaDiComandi {
 					try {
 						// Esiste un costruttore monoparametro
 						c = valueClass.getConstructor(String.class);
-						return (Comando)(c.newInstance(param));
+						return (AbstractComando)(c.newInstance(param));
 					} catch (NoSuchMethodException e) {
 						c = valueClass.getConstructors()[0];
-						return (Comando)(c.newInstance());
+						return (AbstractComando)(c.newInstance());
 					}
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException e) {
@@ -60,6 +64,6 @@ public class FabbricaDiComandiFisarmonica implements FabbricaDiComandi {
 	}
 	
 	public String[] getElencoComandi() {
-		return (String[]) comandi.keySet().toArray();
+		return comandi.keySet().toArray(new String[0]);
 	}
 }

@@ -4,7 +4,7 @@ import it.uniroma3.diadia.IO;
 import it.uniroma3.diadia.Partita;
 import it.uniroma3.diadia.attrezzi.Attrezzo;
 
-public class ComandoPrendi implements Comando {
+public class ComandoPrendi extends AbstractComando {
 	String attrezzo;
 
 	public ComandoPrendi(String parameter) {
@@ -19,11 +19,6 @@ public class ComandoPrendi implements Comando {
 	@Override
 	public String getParametro() {
 		return attrezzo;
-	}
-
-	@Override
-	public boolean isSconosciuto() {
-		return false;
 	}
 
 	@Override

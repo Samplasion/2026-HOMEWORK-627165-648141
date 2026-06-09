@@ -17,7 +17,7 @@ class FabbricaDiComandiFisarmonicaTest {
 
 	@Test
 	void testCorrettiUppercase() {
-		Comando c;
+		AbstractComando c;
 		
 		c = f.parseCommand("AIUTO");
 		assert(c instanceof ComandoAiuto);
@@ -52,7 +52,7 @@ class FabbricaDiComandiFisarmonicaTest {
 
 	@Test
 	void testCorrettiLowercase() {
-		Comando c;
+		AbstractComando c;
 		
 		c = f.parseCommand("aiuto");
 		assert(c instanceof ComandoAiuto);
@@ -87,7 +87,7 @@ class FabbricaDiComandiFisarmonicaTest {
 	
 	@Test
 	void testIncorretti() {
-		Comando c = f.parseCommand("abcd efgh");
+		AbstractComando c = f.parseCommand("abcd efgh");
 		
 		assert(c instanceof ComandoNonValido);
 	}

@@ -6,7 +6,7 @@ import java.util.List;
 public class IOSimulator implements IO {
 	private String[] in;
 	private int index;
-	private ArrayList<String> out;
+	private List<String> out;
 	
 	public IOSimulator(String[] input) {
 		in = input;
@@ -24,6 +24,6 @@ public class IOSimulator implements IO {
 	}
 
 	public List<String> getOutputMessages() {
-		return (List<String>) out.clone();
+		return List.copyOf(out);
 	}
 }

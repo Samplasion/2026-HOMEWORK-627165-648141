@@ -1,28 +1,36 @@
 package it.uniroma3.diadia.giocatore;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import it.uniroma3.diadia.attrezzi.Attrezzo;
 
 public class Borsa {
 	public final static int DEFAULT_PESO_MAX_BORSA = 10;
-	public final static int NUMERO_MASSIMO_ATTREZZI = 10; // speriamo bastino...
-	private Attrezzo[] attrezzi;
-	private int numeroAttrezzi;
+	private Map<String, Attrezzo> attrezzi;
 	private int pesoMax;
+	
 	public Borsa() {
 		this(DEFAULT_PESO_MAX_BORSA);
 	}
+	
 	public Borsa(int pesoMax) {
 		this.pesoMax = pesoMax;
-		this.attrezzi = new Attrezzo[NUMERO_MASSIMO_ATTREZZI];
-		this.numeroAttrezzi = 0;
+		this.attrezzi = new HashMap<>();
 	}
+	
 	public boolean addAttrezzo(Attrezzo attrezzo) {
 		if (this.getPeso() + attrezzo.getPeso() > this.getPesoMax())
 			return false;
-		if (this.numeroAttrezzi==10)
-			return false;
-		this.attrezzi[this.numeroAttrezzi] = attrezzo;
-		this.numeroAttrezzi++;
+		attrezzi.put(attrezzo.getNome(), attrezzo);
 		return true;
 	}
 
@@ -31,51 +39,80 @@ public class Borsa {
 	}
 
 	public Attrezzo getAttrezzo(String nomeAttrezzo) {
-		Attrezzo a = null;
-		for (int i= 0; i<this.numeroAttrezzi; i++)
-			if (this.attrezzi[i].getNome().equals(nomeAttrezzo))
-				a = attrezzi[i];
-		return a;
+		return attrezzi.get(nomeAttrezzo);
 	}
+	
 	public int getPeso() {
 		int peso = 0;
-		for (int i= 0; i<this.numeroAttrezzi; i++)
-			peso += this.attrezzi[i].getPeso();
+		for (Attrezzo a : attrezzi.values())
+			peso += a.getPeso();
 		return peso;
 	}
+	
 	public boolean isEmpty() {
-		return this.numeroAttrezzi == 0;
+		return this.attrezzi.isEmpty();
 	}
+	
 	public boolean hasAttrezzo(String nomeAttrezzo) {
 		return this.getAttrezzo(nomeAttrezzo)!=null;
 	}
+	
 	public Attrezzo removeAttrezzo(String nomeAttrezzo) {
-		Attrezzo a = null;
-		int i;
-		for (i = 0; i < numeroAttrezzi; i++) {
-			if (attrezzi[i].getNome().equals(nomeAttrezzo) && a == null) {
-				a = attrezzi[i];
-				attrezzi[i] = null;
-			}
-			if (a != null)
-				if (i < NUMERO_MASSIMO_ATTREZZI - 1) {
-					attrezzi[i] = attrezzi[i+1];
-				} else if (i >= NUMERO_MASSIMO_ATTREZZI - 1) {
-					attrezzi[i] = null;
-				}
-		}
-		numeroAttrezzi--;
-		return a;
+		return attrezzi.remove(nomeAttrezzo);
 	}
+	
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		if (!this.isEmpty()) {
 			s.append("Contenuto borsa ("+this.getPeso()+"kg/"+this.getPesoMax()+"kg): ");
-			for (int i= 0; i<this.numeroAttrezzi; i++)
-				s.append(attrezzi[i].toString()+" ");
+			for (Attrezzo a : attrezzi.values())
+				s.append(a.toString()+" ");
 		}
 		else
 			s.append("Borsa vuota");
 		return s.toString();
+	}
+	
+	public List<Attrezzo> getContenutoOrdinatoPerPeso() {
+		List<Attrezzo> l = new ArrayList<>(attrezzi.values());
+		Collections.sort(l, new Comparator<Attrezzo>() {
+			@Override
+			public int compare(Attrezzo a, Attrezzo b) {
+				return a.getPeso() - b.getPeso();
+			}
+		});
+		return l;
+	}
+	
+	public SortedSet<Attrezzo> getContenutoOrdinatoPerNome() {
+		SortedSet<Attrezzo> set = new TreeSet<>(new Comparator<Attrezzo>() {
+			@Override
+			public int compare(Attrezzo a, Attrezzo b) {
+				return a.getNome().compareTo(b.getNome());
+			}
+		});
+		set.addAll(attrezzi.values());
+		return set;
+	}
+	
+	public Map<Integer, Set<Attrezzo>> getContenutoRaggruppatoPerPeso() {
+		Map<Integer, Set<Attrezzo>> map = new HashMap<>();
+		for (Attrezzo a : attrezzi.values()) {
+			map.computeIfAbsent(a.getPeso(), _ -> new HashSet<Attrezzo>()).add(a);
+		}
+		return map;
+	}
+	
+	public SortedSet<Attrezzo> getSortedSetOrdinatoPerPeso() {
+		SortedSet<Attrezzo> set = new TreeSet<>(new Comparator<Attrezzo>() {
+			@Override
+			public int compare(Attrezzo a, Attrezzo b) {
+				int ps = a.getPeso() - b.getPeso();
+				if (ps == 0) return a.getNome().compareTo(b.getNome());
+				else return ps;
+			}
+		});
+		set.addAll(attrezzi.values());
+		return set;
 	}
 }

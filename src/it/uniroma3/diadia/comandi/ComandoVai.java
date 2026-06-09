@@ -2,35 +2,45 @@ package it.uniroma3.diadia.comandi;
 
 import it.uniroma3.diadia.IO;
 import it.uniroma3.diadia.Partita;
+import it.uniroma3.diadia.ambienti.Direzione;
 import it.uniroma3.diadia.ambienti.Stanza;
 
-public class ComandoVai implements Comando {
-    private String direzione;
+public class ComandoVai extends AbstractComando {
+	private String direzione;
 
-    public ComandoVai(String parametro) {
-		direzione = parametro;
-    }
+	public ComandoVai(String parametro) {
+		this.direzione = parametro;
+	}
 
-    public String getNome() {
-        return "vai";
-    }
+	public String getNome() {
+		return "vai";
+	}
 
-    public String getParametro() {
-        return this.direzione;
-    }
+	public String getParametro() {
+		return this.direzione;
+	}
 
-    public boolean isSconosciuto() {
-        return false;
-    }
-    
-    public boolean run(IO console, Partita partita) {
-    	if(direzione==null)
+	private Direzione getDirezione() {
+		return Direzione.daStringa(this.direzione);
+	}
+
+	public boolean run(IO console, Partita partita) {
+		if (direzione == null) {
 			console.mostraMessaggio("Dove vuoi andare?");
-		Stanza prossimaStanza = null;
-		prossimaStanza = partita.getLabirinto().getStanzaCorrente().getStanzaAdiacente(direzione);
-		if (prossimaStanza == null)
+			return true;
+		}
+
+		Direzione direzioneEnum = getDirezione();
+		if (direzioneEnum == null) {
 			console.mostraMessaggio("Direzione inesistente");
-		else if (partita.getGiocatore().getCfu() <= 0) {
+			return true;
+		}
+
+		Stanza prossimaStanza = partita.getLabirinto().getStanzaCorrente().getStanzaAdiacente(direzioneEnum);
+		if (prossimaStanza == null) {
+			console.mostraMessaggio("Direzione inesistente");
+			return true;
+		} else if (partita.getGiocatore().getCfu() <= 0) {
 			console.mostraMessaggio("CFU terminati.");
 			return true;
 		} else {
@@ -40,5 +50,5 @@ public class ComandoVai implements Comando {
 		}
 		console.mostraMessaggio(partita.getLabirinto().getStanzaCorrente().getDescrizione());
 		return false;
-    }
+	}
 }

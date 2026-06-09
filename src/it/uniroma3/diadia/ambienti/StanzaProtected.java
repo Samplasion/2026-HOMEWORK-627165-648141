@@ -26,7 +26,7 @@ public class StanzaProtected {
     protected StanzaProtected[] stanzeAdiacenti;
     protected int numeroStanzeAdiacenti;
     
-	protected String[] direzioni;
+	protected Direzione[] direzioni;
     
     /**
      * Crea una stanza. Non ci sono stanze adiacenti, non ci sono attrezzi.
@@ -36,7 +36,7 @@ public class StanzaProtected {
         this.nome = nome;
         this.numeroStanzeAdiacenti = 0;
         this.numeroAttrezzi = 0;
-        this.direzioni = new String[NUMERO_MASSIMO_DIREZIONI];
+		this.direzioni = new Direzione[NUMERO_MASSIMO_DIREZIONI];
         this.stanzeAdiacenti = new StanzaProtected[NUMERO_MASSIMO_DIREZIONI];
         this.attrezzi = new Attrezzo[NUMERO_MASSIMO_ATTREZZI];
     }
@@ -47,7 +47,8 @@ public class StanzaProtected {
      * @param direzione direzione in cui sara' posta la stanza adiacente.
      * @param stanza stanza adiacente nella direzione indicata dal primo parametro.
      */
-    public void impostaStanzaAdiacente(String direzione, StanzaProtected stanza) {
+    public void impostaStanzaAdiacente(Direzione direzione, StanzaProtected stanza) {
+        if (direzione == null) return;
         boolean aggiornato = false;
     	for (int i=0; i<this.direzioni.length; i++)
         	if (direzione.equals(this.direzioni[i])) {
@@ -62,16 +63,24 @@ public class StanzaProtected {
     		}
     }
 
+    public void impostaStanzaAdiacente(String direzione, StanzaProtected stanza) {
+        this.impostaStanzaAdiacente(Direzione.daStringa(direzione), stanza);
+    }
+
     /**
      * Restituisce la stanza adiacente nella direzione specificata
      * @param direzione
      */
-	public StanzaProtected getStanzaAdiacente(String direzione) {
+	public StanzaProtected getStanzaAdiacente(Direzione direzione) {
         StanzaProtected stanza = null;
 		for(int i=0; i<this.numeroStanzeAdiacenti; i++)
         	if (this.direzioni[i].equals(direzione))
         		stanza = this.stanzeAdiacenti[i];
         return stanza;
+	}
+
+	public StanzaProtected getStanzaAdiacente(String direzione) {
+		return this.getStanzaAdiacente(Direzione.daStringa(direzione));
 	}
 
     /**
@@ -123,7 +132,7 @@ public class StanzaProtected {
     	StringBuilder risultato = new StringBuilder();
     	risultato.append(this.nome);
     	risultato.append("\nUscite: ");
-    	for (String direzione : this.direzioni)
+		for (Direzione direzione : this.direzioni)
     		if (direzione!=null)
     			risultato.append(" " + direzione);
     	risultato.append("\nAttrezzi nella stanza: ");
@@ -193,8 +202,16 @@ public class StanzaProtected {
 	public String[] getDirezioni() {
 		String[] direzioni = new String[this.numeroStanzeAdiacenti];
 	    for(int i=0; i<this.numeroStanzeAdiacenti; i++)
-	    	direzioni[i] = this.direzioni[i];
+	    	direzioni[i] = this.direzioni[i].toString();
 	    return direzioni;
     }
+
+	public Direzione[] getDirezioniEnum() {
+		Direzione[] direzioni = new Direzione[this.numeroStanzeAdiacenti];
+		for (int i = 0; i < this.numeroStanzeAdiacenti; i++) {
+			direzioni[i] = this.direzioni[i];
+		}
+		return direzioni;
+	}
 
 }
